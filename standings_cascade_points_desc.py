@@ -111,8 +111,19 @@ FETCH_ALIASES = {
 
 # ===== Ajustes algebraicos por equipo (resets W/L) =====
 TEAM_RECORD_ADJUSTMENTS = {
-    #"Pirates": (22, 3),
-
+   "Marlins": (0, 3),
+     "Astros": (4, 2),
+     "Brewers": (7, 3),
+     "Mets": (5, 1),
+     "Royals": (4, 1),
+     "Guardians": (3, 2),
+        "Pirates": (2, 1),
+        "Tigers": (2, 1),
+        "Braves": (2, 3),
+        "Nlue Jays": (3, 4),
+        "Athletics": (1, 3),
+        "Giants": (2, 5)
+    "Reds": (0, 5),
 }
 
 # ===== Ajustes manuales de PUNTOS (desconexiones, sanciones, bonificaciones) =====
@@ -475,6 +486,7 @@ def games_played_today_scl():
 
 
 # ====== FIN DEL BLOQUE ======
+
 
 
 
