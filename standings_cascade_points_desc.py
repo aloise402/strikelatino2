@@ -69,7 +69,7 @@ API = "https://mlb25.theshow.com/apis/game_history.json"
 PLATFORM = "psn"
 MODE = "LEAGUE"
 SINCE = datetime(2025, 9, 11)
-PAGES = (1, 2)          # <-- SOLO p1 y p2, como validaste
+PAGES = (1, 2)   # <-- SOLO p1 y p2, como validaste
 TIMEOUT = 20
 RETRIES = 2
 
@@ -87,65 +87,32 @@ PRINT_CAPTURE_LIST = False     # lista cada juego capturado (puede ser muy verbo
 
 # ===== Liga (username EXACTO → equipo) =====
 LEAGUE_ORDER = [
-    ("mlbsonoman", "Orioles"),
-    ("AV777", "Red Sox"),
-    ("L_Sanz7", "Yankees"),
-    ("ElChamaquin", "Tigers"),
-    ("Dcontreritas", "Royals"),
-    ("Bufon3-0", "Twins"),
-    ("Amorphis8076", "White Sox"),
-    ("XxCarboriPRxx", "Athletics"),
-    ("lednew__", "Rangers"),
-    ("itschinoo02", "Astros"),
-    ("LaSupraaa", "Angels"),
-    ("JoseAco21", "Braves"),
-    ("NeGrlxs--", "Guardians"),
-    ("lnsocial", "Marlins"),
-    ("LLGlovell", "Mets"),
-    ("MR TRAMPA PR", "Nationals"),
-    ("Papotico013213", "Cubs"),
-    ("SARMIENTOFO-SHO", "Brewers"),
-    ("Joshe_izarra", "Pirates"),
-    ("X2KDUDE", "Cardinals"),
-    ("Francoxico", "Diamondbacks"),
-    ("Mayolito7", "Dodgers"),
-    ("Juanbrachog", "Padres"),
+     ("THELSURICATO", "Mets"),
+    ("machado_seba-03", "Reds"),
+    ("zancudo99", "Rangers"),
+    ("havanavcr10", "Brewers"),
+    ("Juanbrachog", "Tigers"),
+    ("WILZULIA", "Royals"),
+    ("Daviddiaz030425", "Guardians"),
+    ("Juanchojs28", "Giants"),
+    ("me_dicencarlitos", "Marlins"),
+    ("Bufon3-0", "Athletics"),
+    ("edwar13-21", "Blue Jays"),
+    ("mrguerrillas", "Pirates"),
+    ("Diamondmanager", "Astros"),
+    ("Tu_Pauta2000", "Braves"),
 ]
 # ====== IDs alternativos por participante (para sumar sin duplicar) ======
 # Clave = username principal EXACTO en LEAGUE_ORDER; Valor = lista de cuentas alternas
 FETCH_ALIASES = {
-    "AV777": ["StrikerVJ"],
-    "MR TRAMPA PR": ["BENDITOPA"],
-    "Papotico013213": ["El asesino03874"],
-    "lnsocial": ["lnsociaI", "Insocial", "InsociaI"],
-    "X2KDUDE": ["Xx2kdudexX8466"],
-    "Francoxico": ["Xxbandiffft", "XxBandido15xX"],
+    #"AV777": ["StrikerVJ"],
+
 }
 
 # ===== Ajustes algebraicos por equipo (resets W/L) =====
 TEAM_RECORD_ADJUSTMENTS = {
-    "Pirates": (0, 0),
-    "Twins": (0, 0),
-    "Diamondbacks": (0, 0),
-    "Dodgers": (0, 0),
-    "Rangers": (0, 0),
-    "Red Sox": (0, 0),
-    "Royals": (0, 0),
-    "Tigers": (0, 0),
-    "Braves": (0, 0),
-    "Brewers": (0, 0),
-    "Cubs": (0, 0),
-    "Astros": (0, 0),
-    "Padres": (0, 0),
-    "Orioles": (0, 0),
-    "Yankees": (0, 0),
-    "White Sox": (0, 0),
-    "Nationals": (0, 0),
-    "Guardians": (0, 0),
-    "Mets": (0, 0),
-    "Marlins": (0, 0),
-    "Athletics": (0, 0),
-    "Cardinals": (0, 0),
+    #"Pirates": (22, 3),
+
 }
 
 # ===== Ajustes manuales de PUNTOS (desconexiones, sanciones, bonificaciones) =====
@@ -300,10 +267,10 @@ def compute_team_record_for_user(username_exact: str, team_name: str):
     wins_adj, losses_adj = wins + adj_w, losses + adj_l
 
     # 5) Puntos y métricas de tabla
-    scheduled = 42
+    scheduled = 13
     played = max(wins_adj + losses_adj, 0)
     remaining = max(scheduled - played, 0)
-    points_base = 2 * wins_adj + 1 * losses_adj
+    points_base = 3 * wins_adj + 2 * losses_adj
 
     # 6) Ajuste manual de PUNTOS (desconexiones, sanciones, etc.)
     pts_extra, pts_reason = TEAM_POINT_ADJUSTMENTS.get(team_name, (0, ""))
@@ -508,3 +475,9 @@ def games_played_today_scl():
 
 
 # ====== FIN DEL BLOQUE ======
+
+
+
+
+
+
