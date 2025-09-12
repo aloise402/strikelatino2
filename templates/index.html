@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>strike latino 2 - Tabla & Juegos</title>
+  <title>legends online - Tabla & Juegos</title>
   <!-- Sirve el CSS desde /static; asegúrate de tener static/styles.css con contenido -->
   <link rel="stylesheet" href="/static/styles.css" />
   <style>
@@ -28,7 +28,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>⚾ STRIKE LATINO 2 Temporada 5</h1>
+    <h1>⚾ PELOTEROS 20</h1>
     <p class="muted">Tabla de posiciones y juegos del día</p>
 
     <div id="loading">Cargando datos, por favor espera…</div>
@@ -77,7 +77,6 @@
     const hide = x => x.classList.add('hidden');
 
     function parseGameString(s){
-      // Convierte "Mets 3 - Mariners 0 - 07-09-2025 - 6:30 pm (hora Chile)"
       const norm = (s||'').replace(/\s+/g,' ').trim();
       const parts = norm.split(' - ');
       if (parts.length >= 4) {
@@ -112,7 +111,6 @@
         }
         const data = await r.json();
 
-        // Última actualización (si tu app la añade)
         if (data.last_updated) {
           el.updated.textContent = `Última actualización: ${data.last_updated}`;
           show(el.updated);
@@ -122,6 +120,16 @@
         el.standingsBody.innerHTML = '';
         (data.standings || []).forEach((row, i) => {
           const tr = document.createElement('tr');
+
+          // Zonas especiales
+          if (i < 6) {
+            tr.classList.add('postemporada');
+          } else if (i < 10) {
+            tr.classList.add('wildcard');
+          } else if (i < 14) {
+            tr.classList.add('aaa');
+          }
+
           tr.innerHTML = `
             <td>${i+1}</td>
             <td>${row.team}</td>
@@ -137,7 +145,7 @@
         });
         show(el.standingsSection);
 
-        // Juegos de hoy (acepta strings u objetos)
+        // Juegos de hoy
         el.gamesList.innerHTML = '';
         const games = data.games_today || [];
         if (games.length === 0) {
@@ -172,6 +180,3 @@
   </script>
 </body>
 </html>
-
-
-
