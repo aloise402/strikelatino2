@@ -120,7 +120,7 @@ TEAM_RECORD_ADJUSTMENTS = {
         "Pirates": (2, 1),
         "Tigers": (2, 1),
         "Braves": (2, 3),
-        "Nlue Jays": (3, 4),
+        "Blue Jays": (3, 4),
         "Athletics": (1, 3),
         "Giants": (2, 5),
     "Reds": (0, 5),
@@ -486,6 +486,7 @@ def games_played_today_scl():
 
 
 # ====== FIN DEL BLOQUE ======
+
 
 
 
