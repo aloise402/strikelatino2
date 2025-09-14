@@ -202,35 +202,35 @@
   "playoffs": {
     "QF1": {
       "teams": [
-        "Brewers",
-        "Braves"
+        ".....",
+        "....."
       ],
       "games": []
     },
     "QF2": {
       "teams": [
-        "Blue Jays",
-        "Guardians"
+        ".....",
+        "....."
       ],
       "games": []
     },
     "QF3": {
       "teams": [
-        "Giants",
-        "Royals"
+        ".....",
+        "....."
       ],
       "games": []
     },
     "QF4": {
       "teams": [
-        "Mets",
-        "Astros"
+        ".....",
+        "....."
       ],
       "games": []
     },
     "SF1": {
       "teams": [
-        "Ganador QF1",
+        "Ganad0r QF1",
         "Ganador QF4"
       ],
       "games": []
@@ -250,4 +250,5 @@
       "games": []
     }
   }
+
 }
