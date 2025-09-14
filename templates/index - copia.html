@@ -3,26 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Strike Latino 2 - Tabla & Juegos</title>
+  <title>strike latino 2 - Tabla & Juegos</title>
+  <!-- Sirve el CSS desde /static; asegúrate de tener static/styles.css con contenido -->
   <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    /* Fallback visual mínimo por si el CSS no carga */
+    body{font-family:system-ui,Arial,sans-serif;background:#0b1220;color:#e8eefc;margin:0}
+    .container{max-width:1000px;margin:0 auto;padding:24px}
+    .hidden{display:none}
+    .table-wrapper{overflow:auto;background:#121a2b;border-radius:12px;padding:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+    th{color:#9fb3d1;font-weight:600;font-size:13px;text-align:left}
+    td{font-size:14px}
+    .num{text-align:right}
+    .tag{background:rgba(77,163,255,.12);color:#cfe5ff;padding:2px 8px;border-radius:999px;font-size:12px}
+    .muted{color:#9fb3d1}
+    .pill{font-size:12px;color:#9fb3d1}
+    .games-list{list-style:none;padding:0;margin:0}
+    .games-list li{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+    #error{background:#2a0f13;border:1px solid #4b151b;color:#ffb3b8;padding:10px 12px;border-radius:8px;margin:10px 0}
+    #loading{color:#9fb3d1;margin:8px 0}
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>⚾ STRIKE LATINO 2 - Temporada 5</h1>
-    <p class="subtitle">Tabla de posiciones y juegos del día</p>
+    <h1>⚾ STRIKE LATINO 2 Temporada 5</h1>
+    <p class="muted">Tabla de posiciones y juegos del día</p>
 
-    <!-- Barra de progreso de la temporada -->
-    <div id="progress-container">
-      <div id="progress-bar">0%</div>
-    </div>
-
+    <div id="loading">Cargando datos, por favor espera…</div>
     <div id="error" class="hidden"></div>
     <div id="last-updated" class="muted hidden"></div>
 
     <section id="standings-section" class="hidden">
-      <h2>🏆 Tabla de Posiciones</h2>
+      <h2>🏆 Tabla de posiciones</h2>
       <div class="table-wrapper">
-        <table id="standings-table">
+        <table>
           <thead>
             <tr>
               <th>#</th>
@@ -34,7 +50,6 @@
               <th class="num">L</th>
               <th class="num">Por jugar</th>
               <th class="num">Pts</th>
-              <th>Postemporada</th>
             </tr>
           </thead>
           <tbody id="standings-body"></tbody>
@@ -43,17 +58,14 @@
     </section>
 
     <section id="games-today-section" class="hidden">
-      <h2>📅 Juegos Jugados Hoy</h2>
+      <h2>📅 Juegos jugados hoy</h2>
       <ul id="games-today-list" class="games-list"></ul>
     </section>
   </div>
 
-  <footer>
-    <p>Liga Strike Latino 2 © 2025</p>
-  </footer>
-
   <script>
     const el = {
+      loading: document.getElementById('loading'),
       error: document.getElementById('error'),
       updated: document.getElementById('last-updated'),
       standingsSection: document.getElementById('standings-section'),
@@ -65,6 +77,7 @@
     const hide = x => x.classList.add('hidden');
 
     function parseGameString(s){
+      // Convierte "Mets 3 - Mariners 0 - 07-09-2025 - 6:30 pm (hora Chile)"
       const norm = (s||'').replace(/\s+/g,' ').trim();
       const parts = norm.split(' - ');
       if (parts.length >= 4) {
@@ -89,6 +102,7 @@
 
     async function loadData(){
       hide(el.error);
+      show(el.loading);
       try{
         const r = await fetch('/api/full', {cache:'no-store'});
         if(!r.ok){
@@ -98,6 +112,7 @@
         }
         const data = await r.json();
 
+        // Última actualización (si tu app la añade)
         if (data.last_updated) {
           el.updated.textContent = `Última actualización: ${data.last_updated}`;
           show(el.updated);
@@ -107,26 +122,22 @@
         el.standingsBody.innerHTML = '';
         (data.standings || []).forEach((row, i) => {
           const tr = document.createElement('tr');
-          const pos = i + 1;
-          tr.classList.toggle("clasificado", pos <= 8);
-
           tr.innerHTML = `
-            <td>${pos}</td>
-            <td class="team">${row.team}</td>
-            <td class="user">${row.user}</td>
+            <td>${i+1}</td>
+            <td>${row.team}</td>
+            <td><span class="tag">${row.user}</span></td>
             <td class="num">${row.scheduled}</td>
             <td class="num">${row.played}</td>
             <td class="num">${row.wins}</td>
             <td class="num">${row.losses}</td>
             <td class="num">${row.remaining}</td>
             <td class="num">${row.points}</td>
-            <td>${pos <= 8 ? "🏆 <span class='badge'>Clasificado</span>" : "–"}</td>
           `;
           el.standingsBody.appendChild(tr);
         });
         show(el.standingsSection);
 
-        // Juegos de hoy
+        // Juegos de hoy (acepta strings u objetos)
         el.gamesList.innerHTML = '';
         const games = data.games_today || [];
         if (games.length === 0) {
@@ -152,36 +163,15 @@
       }catch(e){
         el.error.textContent = 'No se pudieron cargar los datos: ' + e.message;
         show(el.error);
+      }finally{
+        hide(el.loading);
       }
     }
 
     loadData();
-
-    // ====================
-    // Barra de progreso temporada
-    // ====================
-    function updateSeasonProgress() {
-      const startDate = new Date("2025-08-31");
-      const endDate = new Date("2025-09-15");
-      const now = new Date();
-
-      const total = endDate - startDate;
-      const elapsed = now - startDate;
-      let percent = Math.max(0, Math.min(100, (elapsed / total) * 100));
-
-      const bar = document.getElementById("progress-bar");
-      const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-
-      if (daysLeft < 2) {
-        bar.textContent = `${daysLeft} día${daysLeft === 1 ? '' : 's'} restantes`;
-      } else {
-        bar.textContent = percent.toFixed(0) + "%";
-      }
-      bar.style.width = percent.toFixed(1) + "%";
-    }
-
-    updateSeasonProgress();
-    setInterval(updateSeasonProgress, 60000);
   </script>
 </body>
 </html>
+
+
+
