@@ -18,10 +18,10 @@ def api_full():
     try:
         with open(CACHE_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-        
-        # Opcional: añadir la marca de tiempo de la última actualización
+
+        # añadir marca de tiempo
         data["last_updated"] = datetime.fromtimestamp(os.path.getmtime(CACHE_FILE)).strftime("%Y-%m-%d %H:%M:%S")
-        
+
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": f"Failed to read cached data: {e}"}), 500

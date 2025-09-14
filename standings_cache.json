@@ -197,6 +197,57 @@
       "detail": []
     }
   ],
-  "games_today": [],
-  "last_updated": "2025-09-14 00:38:31"
+  "games_history": [],
+  "last_updated": "2025-09-14 01:34:36",
+  "playoffs": {
+    "QF1": {
+      "teams": [
+        "Brewers",
+        "Braves"
+      ],
+      "games": []
+    },
+    "QF2": {
+      "teams": [
+        "Blue Jays",
+        "Guardians"
+      ],
+      "games": []
+    },
+    "QF3": {
+      "teams": [
+        "Giants",
+        "Royals"
+      ],
+      "games": []
+    },
+    "QF4": {
+      "teams": [
+        "Mets",
+        "Astros"
+      ],
+      "games": []
+    },
+    "SF1": {
+      "teams": [
+        "Ganador QF1",
+        "Ganador QF4"
+      ],
+      "games": []
+    },
+    "SF2": {
+      "teams": [
+        "Ganador QF2",
+        "Ganador QF3"
+      ],
+      "games": []
+    },
+    "Final": {
+      "teams": [
+        "Ganador SF1",
+        "Ganador SF2"
+      ],
+      "games": []
+    }
+  }
 }

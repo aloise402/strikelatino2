@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Strike Latino 2 - Tabla & Juegos</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <div class="container">
     <h1>⚾ STRIKE LATINO 2 - Temporada 5</h1>
-    <p class="subtitle">Tabla de posiciones y juegos del día</p>
+    <p class="subtitle">Tabla de posiciones, historial de juegos y postemporada</p>
 
-    <!-- Barra de progreso de la temporada -->
+    <!-- Barra de progreso -->
     <div id="progress-container">
       <div id="progress-bar">0%</div>
     </div>
@@ -19,6 +19,7 @@
     <div id="error" class="hidden"></div>
     <div id="last-updated" class="muted hidden"></div>
 
+    <!-- Tabla de posiciones -->
     <section id="standings-section" class="hidden">
       <h2>🏆 Tabla de Posiciones</h2>
       <div class="table-wrapper">
@@ -42,9 +43,54 @@
       </div>
     </section>
 
-    <section id="games-today-section" class="hidden">
-      <h2>📅 Juegos Jugados Hoy</h2>
-      <ul id="games-today-list" class="games-list"></ul>
+    <!-- Historial acumulado -->
+    <section id="games-history-section" class="hidden">
+      <h2>📋 Historial de juegos</h2>
+      <ul id="games-history-list" class="games-list"></ul>
+    </section>
+
+    <!-- Postemporada -->
+    <section id="playoffs-section" class="hidden">
+      <h2>🏆 Postemporada</h2>
+      <div class="bracket">
+        <div class="round">
+          <h3>Cuartos de Final</h3>
+          <div class="match">
+            <div class="pair"><span id="seed1"></span> vs <span id="seed8"></span></div>
+            <ul id="qf1-games" class="games"></ul>
+          </div>
+          <div class="match">
+            <div class="pair"><span id="seed2"></span> vs <span id="seed7"></span></div>
+            <ul id="qf2-games" class="games"></ul>
+          </div>
+          <div class="match">
+            <div class="pair"><span id="seed3"></span> vs <span id="seed6"></span></div>
+            <ul id="qf3-games" class="games"></ul>
+          </div>
+          <div class="match">
+            <div class="pair"><span id="seed4"></span> vs <span id="seed5"></span></div>
+            <ul id="qf4-games" class="games"></ul>
+          </div>
+        </div>
+        <div class="round">
+          <h3>Semifinales</h3>
+          <div class="match">
+            <div class="pair"><span id="sf1-team1">Ganador QF1</span> vs <span id="sf1-team2">Ganador QF4</span></div>
+            <ul id="sf1-games" class="games"></ul>
+          </div>
+          <div class="match">
+            <div class="pair"><span id="sf2-team1">Ganador QF2</span> vs <span id="sf2-team2">Ganador QF3</span></div>
+            <ul id="sf2-games" class="games"></ul>
+          </div>
+        </div>
+        <div class="round">
+          <h3>Final</h3>
+          <div class="match">
+            <div class="pair"><span id="final-team1">Ganador SF1</span> vs <span id="final-team2">Ganador SF2</span></div>
+            <ul id="final-games" class="games"></ul>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -58,8 +104,8 @@
       updated: document.getElementById('last-updated'),
       standingsSection: document.getElementById('standings-section'),
       standingsBody: document.getElementById('standings-body'),
-      gamesSection: document.getElementById('games-today-section'),
-      gamesList: document.getElementById('games-today-list')
+      gamesHistorySection: document.getElementById('games-history-section'),
+      gamesHistoryList: document.getElementById('games-history-list')
     };
     const show = x => x.classList.remove('hidden');
     const hide = x => x.classList.add('hidden');
@@ -126,13 +172,13 @@
         });
         show(el.standingsSection);
 
-        // Juegos de hoy
-        el.gamesList.innerHTML = '';
-        const games = data.games_today || [];
-        if (games.length === 0) {
-          el.gamesList.innerHTML = `<li class="muted">No hay juegos finalizados hoy.</li>`;
+        // Historial acumulado
+        el.gamesHistoryList.innerHTML = '';
+        const history = data.games_history || [];
+        if (history.length === 0) {
+          el.gamesHistoryList.innerHTML = `<li class="muted">No hay juegos registrados aún.</li>`;
         } else {
-          games.forEach(g => {
+          history.forEach((g, i) => {
             let obj = g;
             if (typeof g === 'string') obj = parseGameString(g);
             const li = document.createElement('li');
@@ -144,10 +190,13 @@
                 <div class="pill">${obj.ended_at_local}</div>
               `;
             }
-            el.gamesList.appendChild(li);
+            el.gamesHistoryList.appendChild(li);
           });
         }
-        show(el.gamesSection);
+        show(el.gamesHistorySection);
+
+        // Playoffs (de momento manual, con postseason.json)
+        if (data.playoffs) renderPlayoffs(data.playoffs);
 
       }catch(e){
         el.error.textContent = 'No se pudieron cargar los datos: ' + e.message;
@@ -155,11 +204,38 @@
       }
     }
 
+    function renderPlayoffs(playoffs) {
+      const setText = (id, txt) => document.getElementById(id).textContent = txt;
+      setText("seed1", playoffs.QF1.teams[0]);
+      setText("seed8", playoffs.QF1.teams[1]);
+      setText("seed2", playoffs.QF2.teams[0]);
+      setText("seed7", playoffs.QF2.teams[1]);
+      setText("seed3", playoffs.QF3.teams[0]);
+      setText("seed6", playoffs.QF3.teams[1]);
+      setText("seed4", playoffs.QF4.teams[0]);
+      setText("seed5", playoffs.QF4.teams[1]);
+
+      const fillGames = (games, ulId) => {
+        const ul = document.getElementById(ulId);
+        ul.innerHTML = "";
+        games.forEach((g,i) => {
+          const li = document.createElement("li");
+          li.textContent = `Juego ${i+1}: ${g}`;
+          ul.appendChild(li);
+        });
+      };
+
+      fillGames(playoffs.QF1.games, "qf1-games");
+      fillGames(playoffs.QF2.games, "qf2-games");
+      fillGames(playoffs.QF3.games, "qf3-games");
+      fillGames(playoffs.QF4.games, "qf4-games");
+
+      show(document.getElementById("playoffs-section"));
+    }
+
     loadData();
 
-    // ====================
-    // Barra de progreso temporada
-    // ====================
+    // Barra progreso temporada
     function updateSeasonProgress() {
       const startDate = new Date("2025-08-31");
       const endDate = new Date("2025-09-15");
